@@ -1,11 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from logic import analyze_emotion #Lógica creada
+from logic import analyze_emotion # Lógica creada
 
 app = FastAPI(
     title="Emotional Analysis API",
-    description="Bakend minimalista.",
+    description="Backend minimalista.",
     version="1.0.0"
+)
+
+# Configurar CORS (Permitir que la app web hable con el backend)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # En producción esto se restringe, pero para dev está bien
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Modelo de datos para validar la entrada
