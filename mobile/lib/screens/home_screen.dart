@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +10,36 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
+
+
+  final ApiService _apiService = ApiService(); // Instancia de la API
+
+  bool _isLoading = false; // para saber si esta cargando
+
+  // Funcion asincrona para llamar al cerebro
+  Future<void> _analyzeEmotion() async {
+    if (_controller.text.isEmpty) return;
+
+    setState(() => _isLoading = true); // Bloqueamos boton y mostramos carga
+
+    try {
+      final result = await _apiService.analyzeEmotion(_controller.text);
+
+      // Solo imprimir el resultado en consola por ahora
+      print("Resultado de la IA: $result");
+
+      // Y mostramos un mensaje rapido en pantalla
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Emoción: ${result['emotion']}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false); // Termina la carga
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +78,23 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // Aquí conectaremos con la API más adelante
-                print("Texto a analizar: ${_controller.text}");
-              },
+              onPressed: _isLoading ? null : _analyzeEmotion, // sic arga, deshabilita
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00796B), // Teal apagado
+                backgroundColor: const Color(0xFF00796B),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                "Analizar",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              child: _isLoading
+                ? const SizedBox( // spinner pequeño si carga
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                )
+              : const Text( // Texto nromal si no carga
+                  "Analizar",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             )
           ],
