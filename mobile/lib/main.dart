@@ -1,3 +1,4 @@
+import 'core/app_router.dart';
 import 'package:flutter/material.dart';
 import 'shared/theme/app_theme.dart';
 import 'features/onboarding/presentation/screens/welcome_screen.dart';
@@ -14,11 +15,11 @@ class PersonalEvolutionApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Personal Evolution',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const WelcomeScreen(),
+      routerConfig: appRouter,
     );
   }
 }
