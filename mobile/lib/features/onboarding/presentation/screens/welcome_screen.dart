@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../journal/presentation/screens/journal_entry_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -134,6 +135,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                   child: FilledButton(
                     onPressed: () {
                       // Navigate to Home (TODO)
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const JournalEntryScreen()));
                     },
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.white,

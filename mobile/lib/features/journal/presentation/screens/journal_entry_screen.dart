@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/daily_log.dart';
+import 'package:uuid/uuid.dart';
+import '../../../../core/services/service_locator.dart';
+import '../bloc/journal_bloc.dart';
+
 // TODO: Import Bloc
 
 class JournalEntryScreen extends StatefulWidget {
@@ -18,63 +22,85 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Registro Diario'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              // TODO: Save logic via Bloc
-              // final log = DailyLog(
-              //   id: const Uuid().v4(),
-              //   date: DateTime.now(),
-              //   energyLevel: _energyLevel.round(),
-              //   stressLevel: _stressLevel.round(),
-              //   note: _noteController.text,
-              // );
-              // context.read<JournalBloc>().add(SaveLogEvent(log));
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSliderSection(
-              label: 'Nivel de Energía',
-              value: _energyLevel,
-              color: Colors.amber,
-              onChanged: (v) => setState(() => _energyLevel = v),
-            ),
-            const SizedBox(height: 24),
-            _buildSliderSection(
-              label: 'Nivel de Estrés',
-              value: _stressLevel,
-              color: Colors.redAccent,
-              onChanged: (v) => setState(() => _stressLevel = v),
-            ),
-            const SizedBox(height: 24),
-            const Text('Notas (Contexto)', style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _noteController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: '¿Qué pasó hoy? (Esto ayuda a la IA a entender el contexto)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Theme.of(context).cardColor,
+     return BlocProvider(
+      create: (context) => getIt<JournalBloc>(), // Inyectamos el Bloc
+      child: BlocConsumer<JournalBloc, JournalState>(
+        listener: (context, state) {
+          if (state is JournalSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('¡Diario guardado!')),
+            );
+            Navigator.of(context).pop(); // Volver atrás (Standard Nav)
+          }
+          if (state is JournalError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is JournalLoading) {
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Registro Diario'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: () {
+                      final log = DailyLog(
+                        id: const Uuid().v4(),
+                        date: DateTime.now(),
+                        energyLevel: _energyLevel.round(),
+                        stressLevel: _stressLevel.round(),
+                        note: _noteController.text,
+                      );
+                      context.read<JournalBloc>().add(SaveDailyLog(log));
+                    },
+                  )
+                ],
               ),
-            ),
-          ],
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSliderSection(
+                      label: 'Nivel de Energía',
+                      value: _energyLevel,
+                      color: Colors.amber,
+                      onChanged: (v) => setState(() => _energyLevel = v),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSliderSection(
+                      label: 'Nivel de Estrés',
+                      value: _stressLevel,
+                      color: Colors.redAccent,
+                      onChanged: (v) => setState(() => _stressLevel = v),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text('Notas (Contexto)', style: TextStyle(fontSize: 18)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _noteController,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: '¿Qué pasó hoy? (Esto ayuda a la IA a entender el contexto)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).cardColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildSliderSection({
