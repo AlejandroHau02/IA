@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'shared/theme/app_theme.dart';
+import 'features/onboarding/presentation/screens/welcome_screen.dart';
 
 void main() {
-  runApp(const EmotionalApp());
+  runApp(const PersonalEvolutionApp());
 }
 
-class EmotionalApp extends StatelessWidget {
-  const EmotionalApp({super.key});
+class PersonalEvolutionApp extends StatelessWidget {
+  const PersonalEvolutionApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Emotional App',
+      title: 'Personal Evolution',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: const ColorScheme.dark(
-          surface: Color(0xFF121212),
-          primary: Color(0xFF007968),
-        ),
-        fontFamily: 'Roboto',
-      ),
-      home: const HomeScreen(),
+      theme: AppTheme.darkTheme,
+      home: const WelcomeScreen(),
     );
   }
 }

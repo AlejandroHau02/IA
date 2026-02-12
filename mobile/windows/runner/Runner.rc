@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.emotional.app" "\0"
-            VALUE "FileDescription", "emotional_app" "\0"
+            VALUE "CompanyName", "com.personalevolution" "\0"
+            VALUE "FileDescription", "personal_evolution" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "emotional_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.emotional.app. All rights reserved." "\0"
-            VALUE "OriginalFilename", "emotional_app.exe" "\0"
-            VALUE "ProductName", "emotional_app" "\0"
+            VALUE "InternalName", "personal_evolution" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.personalevolution. All rights reserved." "\0"
+            VALUE "OriginalFilename", "personal_evolution.exe" "\0"
+            VALUE "ProductName", "personal_evolution" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

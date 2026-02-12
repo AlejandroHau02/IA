@@ -1,4 +1,4 @@
-# emotional_app
+# personal_evolution
 
 A new Flutter project.
 

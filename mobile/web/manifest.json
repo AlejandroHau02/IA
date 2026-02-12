@@ -1,6 +1,6 @@
 {
-    "name": "emotional_app",
-    "short_name": "emotional_app",
+    "name": "personal_evolution",
+    "short_name": "personal_evolution",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
