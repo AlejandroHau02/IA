@@ -5,6 +5,8 @@ import '../../domain/entities/daily_log.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/services/service_locator.dart';
 import '../bloc/journal_bloc.dart';
+import '../../domain/services/sentiment_service.dart';
+import 'dart:async';
 
 // TODO: Import Bloc
 
@@ -19,6 +21,56 @@ class _JournalEntryScreenState extends State<JournalEntryScreen> {
   double _energyLevel = 5.0;
   double _stressLevel = 5.0;
   final TextEditingController _noteController = TextEditingController();
+  Timer? _debounce;
+
+  // Obtener servicio
+  final _sentimentService = getIt<SentimentService>();
+
+  @override
+  void initState(){
+    super.initState();
+    // Escuchar cambios en el texto
+    _noteController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose(){
+    _noteController.removeListener(_onTextChanged);
+    _debounce?.cancel();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    // Cancelar el timer anterior si se sigue escribiendo
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    // Esperar 500ms para analizar
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final text = _noteController.text;
+      final analysis = _sentimentService.analyzeText(text);
+
+      if (analysis != null) {
+        setState(() {
+          // Sólo actualizar si el análisis encontró algo
+          if (analysis.containsKey('energy')) {
+            _energyLevel = analysis['energy']!;
+          }
+          if (analysis.containsKey('stress')) {
+            _stressLevel = analysis['stress']!;
+          }
+        });
+
+        // Feedback visual sutil
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Niveles ajustados por IA'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

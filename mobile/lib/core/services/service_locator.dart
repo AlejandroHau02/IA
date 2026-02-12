@@ -3,6 +3,7 @@ import '../../features/journal/data/repositories/journal_repository_impl.dart';
 import '../../features/journal/domain/repositories/journal_repository.dart';
 import '../../features/journal/presentation/bloc/journal_bloc.dart';
 import '../database/app_database.dart';
+import '../../features/journal/domain/services/sentiment_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -12,7 +13,8 @@ Future<void> setupServiceLocator() async {
 
   // 2. Core Services
   // (Here we will register AnalyticsService, LogService, etc.)
-
+  getIt.registerLazySingleton<SentimentService>(() => SentimentService());
+  
   // 3. Repositories
   getIt.registerLazySingleton<JournalRepository>(
     () => JournalRepositoryImpl(getIt()),
