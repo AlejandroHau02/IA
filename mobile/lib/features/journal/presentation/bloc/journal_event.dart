@@ -15,3 +15,6 @@ class SaveDailyLog extends JournalEvent {
     @override
     List<Object> get props => [log];
 }
+
+// Evento para pedir el historial
+class LoadJournalHistory extends JournalEvent {}

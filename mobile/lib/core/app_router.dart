@@ -2,11 +2,16 @@ import 'package:go_router/go_router.dart';
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../features/journal/presentation/screens/journal_entry_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../features/journal/presentation/bloc/journal_bloc.dart';
+import 'services/service_locator.dart';
 
 // 1. Definimos la configuración del Router
 final appRouter = GoRouter(
+
     // 2. Ruta inicial: Pantalla que se muestra al abrir la app
     // Dashboard por ahora
+
     initialLocation: '/dashboard',
 
     routes: [
@@ -19,7 +24,11 @@ final appRouter = GoRouter(
         // 4. Ruta para el dashboard
         GoRoute(
             path: '/dashboard',
-            builder: (context, state) => const DashboardScreen(),
+            builder: (context, state) => BlocProvider(
+                // Crear el bloc y lanzar el evento "load" de una vez
+                create: (_) => getIt<JournalBloc>()..add(LoadJournalHistory()),
+                child: DashboardScreen(),
+            ),
         ),
 
         // Ruta para crear una nueva entrada

@@ -20,3 +20,13 @@ class JournalError extends JournalState {
     @override
     List<Object> get props => [message];
 }
+
+// Estado que contiene la lista de diarios cargada
+class JournalHistoryLoaded extends JournalState {
+    final List<DailyLog> logs;
+
+    const JournalHistoryLoaded(this.logs);
+
+    @override
+    List<Object> get props => [logs];
+}
