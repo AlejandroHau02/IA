@@ -9,4 +9,7 @@ abstract class JournalRepository {
 
   /// Get today's log if it exists
   Future<DailyLog?> getTodayLog();
+
+  // Delete a log entry
+  Future<void> deleteLog(String id);
 }

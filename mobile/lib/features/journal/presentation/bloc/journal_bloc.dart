@@ -12,6 +12,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     JournalBloc({required this.repository}) : super(JournalInitial()) {
         on<SaveDailyLog>(_onSaveDailyLog);
         on<LoadJournalHistory>(_onLoadJournalHistory);
+        on<DeleteDailyLog>(_onDeleteDailyLog);
+
     }
 
     Future<void> _onSaveDailyLog(
@@ -37,6 +39,20 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
             emit(JournalHistoryLoaded(logs)); // 2- Entregar los datos
         } catch (e) {
             emit(JournalError("Error al cargar historial: $e")); // 4- Algo salió mal
+        }
+    }
+
+    Future<void> _onDeleteDailyLog(
+        DeleteDailyLog event,
+        Emitter<JournalState> emit,
+    ) async {
+        try {
+            // 1. Borramos
+            await repository.deleteLog(event.id);
+            // 2. Recarga la lsita apra que desaparezca de la pantalla
+            add(LoadJournalHistory());            
+        } catch (e) {
+            emit(JournalError("No se pudo eliminar: $e"));
         }
     }
 }

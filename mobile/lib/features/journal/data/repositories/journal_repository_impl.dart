@@ -46,6 +46,12 @@ class JournalRepositoryImpl implements JournalRepository {
     return row != null ? _mapRowToEntity(row) : null;
   }
 
+  @override
+  Future<void> deleteLog(String id) async {
+    // "Borrar de la tabla dailyEntries donde el ID coincida"
+    await (_db.delete(_db.dailyEntries)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
   DailyLog _mapRowToEntity(DailyEntry row) {
     return DailyLog(
       id: row.id,

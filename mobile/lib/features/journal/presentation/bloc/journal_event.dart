@@ -18,3 +18,14 @@ class SaveDailyLog extends JournalEvent {
 
 // Evento para pedir el historial
 class LoadJournalHistory extends JournalEvent {}
+
+// Evento para eliminar un ID
+class DeleteDailyLog extends JournalEvent {
+
+    final String id;
+
+    const DeleteDailyLog(this.id);
+
+    @override
+    List<Object> get props => [id];
+}

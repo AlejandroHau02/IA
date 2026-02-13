@@ -29,10 +29,37 @@ class JournalListScreen extends StatelessWidget {
                             itemCount: state.logs.length,
                             itemBuilder: (context, index) {
                                 final log = state.logs[index];
-                                return ListTile(
-                                    title: Text(log.note ?? 'Sin texto', style: const TextStyle(color: Colors.white)),
-                                    subtitle: Text(log.date.toString(), style: const TextStyle(color: Colors.grey)),
-                                    leading: CircleAvatar(child: Text(log.energyLevel.toString())),
+                                return Dismissible(
+
+                                    // 1. La llave única para identificar que se borra
+                                    key: Key(log.id),
+
+                                    // 2. Fondo rojo con icono de basura (feedback visual)
+                                    background: Container(
+                                        color: Colors.red,
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.only(right: 20),
+                                        child: const Icon(Icons.delete, color: Colors.white),
+                                    ),
+
+                                    // 3. Que hacer cuandose completa el deslizamiento
+                                    onDismissed: (direction) {
+
+                                        // Ejecutar el evento de borrar en el Bloc
+                                        context.read<JournalBloc>().add(DeleteDailyLog(log.id));
+
+                                        // Mostrar un mensaje
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text('Entrada eliminada')),
+                                        );
+                                    },
+
+                                    // fila
+                                    child: ListTile(
+                                        title: Text(log.note ?? 'Sin texto', style: const TextStyle(color: Colors.white)),
+                                        subtitle: Text(log.date.toString(), style: const TextStyle(color: Colors.grey)),
+                                        leading: CircleAvatar(child: Text(log.energyLevel.toString())),
+                                    ),
                                 );
                             },
                         );
